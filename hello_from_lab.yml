@@ -1,6 +1,6 @@
 # First Play
 - name: Play - Handle Files in all hosts
-  hosts: all
+  hosts: app_group
   tasks:
   - name: all host are identified with a file
     copy:
