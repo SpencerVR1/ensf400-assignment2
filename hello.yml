@@ -8,7 +8,7 @@
     - name: Install Nginx
       apt:
         name: nginx
-        state: present
+        state: latest
     - name: Copy the Nginx config file to /etc/nginx/sites-available
       copy:
         src: ./nginx.cfg
