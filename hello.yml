@@ -1,3 +1,31 @@
+# Load Balancer Play
+- name: Play - Install and configure Nginx as a LoadBalancer
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Update cache
+      apt: update_cache=yes   
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+    - name: Copy the Nginx config file to /etc/nginx/sites-available
+      copy:
+        src: ./nginx.cfg
+        dest: /etc/nginx/sites-available/nginx.cfg
+      become: yes
+    - name: Create symlink of the config file at /etc/nginx/sites-enabled
+      file:
+        src: /etc/nginx/sites-available/nginx.cfg
+        dest: /etc/nginx/sites-enabled/default
+        state: link
+      become: yes
+    - name: Restart nginx to apply changes
+      service:
+        name: nginx
+        state: restarted
+      become: yes
+
 # First Play
 - name: Play - Handle Files in all hosts
   hosts: all
@@ -39,7 +67,6 @@
       production: true
   - name: Install forever (to run Node.js app).
     npm: name=forever global=yes state=present
-  
   - name: Check list of Node.js apps running.
     command: forever list
     register: forever_list
@@ -48,4 +75,3 @@
   - name: Start example Node.js app.
     command: forever start /node-app/app.js
     when: "forever_list.stdout.find('/node-app/app.js') == -1"
-
